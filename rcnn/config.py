@@ -149,6 +149,29 @@ dataset.coco.root_path = 'data'
 dataset.coco.dataset_path = 'data/coco'
 dataset.coco.NUM_CLASSES = 81
 
+dataset.Kitti = edict()
+dataset.Kitti.image_set = 'train'
+dataset.Kitti.test_image_set = 'val'
+dataset.Kitti.root_path = 'data'
+dataset.Kitti.dataset_path = 'data/kitti'
+dataset.Kitti.NUM_CLASSES = 4
+dataset.Kitti.SCALES = [(376, 1242)]
+dataset.Kitti.ANCHOR_SCALES = (2, 4, 8, 16, 24, 48)
+dataset.Kitti.ANCHOR_RATIOS = (0.5, 1, 2)
+dataset.Kitti.NUM_ANCHORS = len(dataset.Kitti.ANCHOR_SCALES) * len(dataset.Kitti.ANCHOR_RATIOS)
+
+dataset.Custom = edict()
+dataset.Custom.image_set = 'train'
+dataset.Custom.test_image_set = 'test0922'
+dataset.Custom.root_path = 'data'
+dataset.Custom.dataset_path = 'data/custom'
+dataset.Custom.NUM_CLASSES = 4
+dataset.Custom.SCALES = [(720, 1280)]
+dataset.Custom.ANCHOR_SCALES = (2, 4, 8, 16, 24, 48)
+dataset.Custom.ANCHOR_RATIOS = (0.5, 1, 2)
+dataset.Custom.NUM_ANCHORS = len(dataset.Custom.ANCHOR_SCALES) * len(dataset.Custom.ANCHOR_RATIOS)
+
+
 
 def generate_config(_network, _dataset):
     for k, v in network[_network].items():
