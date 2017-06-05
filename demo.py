@@ -3,6 +3,7 @@ import os
 import cv2
 import mxnet as mx
 import numpy as np
+from rcnn.logger import logger
 from rcnn.config import config
 from rcnn.symbol import get_vgg_test, get_vgg_rpn_test
 from rcnn.io.image import resize, transform
@@ -22,7 +23,7 @@ SHORT_SIDE = config.SCALES[0][0]
 LONG_SIDE = config.SCALES[0][1]
 PIXEL_MEANS = config.PIXEL_MEANS
 DATA_NAMES = ['data', 'im_info']
-LABEL_NAMES = ['cls_prob_label']
+LABEL_NAMES = None
 DATA_SHAPES = [('data', (1, 3, LONG_SIDE, SHORT_SIDE)), ('im_info', (1, 3))]
 LABEL_SHAPES = None
 # visualization
@@ -103,37 +104,20 @@ def demo_net(predictor, image_name, vis=False):
     boxes_this_image = [[]] + [all_boxes[j] for j in range(1, len(CLASSES))]
 
     # print results
-    print 'class ---- [[x1, x2, y1, y2, confidence]]'
+    logger.info('---class---')
+    logger.info('[[x1, x2, y1, y2, confidence]]')
     for ind, boxes in enumerate(boxes_this_image):
         if len(boxes) > 0:
-            print '---------', CLASSES[ind], '---------'
-            print boxes
+            logger.info('---%s---' % CLASSES[ind])
+            logger.info('%s' % boxes)
 
     if vis:
         vis_all_detection(data_dict['data'].asnumpy(), boxes_this_image, CLASSES, im_scale)
     else:
         result_file = image_name.replace('.', '_result.')
-        print 'results saved to %s' % result_file
+        logger.info('results saved to %s' % result_file)
         im = draw_all_detection(data_dict['data'].asnumpy(), boxes_this_image, CLASSES, im_scale)
         cv2.imwrite(result_file, im)
-
-
-def demo_rpn(predictor, image_name):
-    """
-    generate data_batch -> im_proposal -> output
-    :param predictor: Predictor
-    :param image_name: image name
-    :return: None
-    """
-    assert os.path.exists(image_name), image_name + ' not found'
-    im = cv2.imread(image_name)
-    data_batch, data_names, im_scale = generate_batch(im)
-    scores, boxes, data_dict = im_proposal(predictor, data_batch, data_names, 1.0)
-
-    keep = np.where((scores > CONF_THRESH))[0]
-    dets = np.hstack((boxes, scores))[keep, :]
-    # print np.array_str(dets, precision=6, suppress_small=True)
-    vis_all_detection(data_dict['data'].asnumpy(), [dets], ['obj'], im_scale)
 
 
 def parse_args():
@@ -155,23 +139,5 @@ def main():
     demo_net(predictor, args.image, args.vis)
 
 
-def cpu_rpn():
-    args = parse_args()
-    ctx = mx.cpu()
-    symbol = get_vgg_rpn_test(num_anchors=config.NUM_ANCHORS)
-    predictor = get_net(symbol, args.prefix, args.epoch, ctx)
-    demo_rpn(predictor, args.image)
-
-
-def gpu_rpn():
-    args = parse_args()
-    ctx = mx.gpu(args.gpu)
-    symbol = get_vgg_rpn_test(num_anchors=config.NUM_ANCHORS)
-    predictor = get_net(symbol, args.prefix, args.epoch, ctx)
-    demo_rpn(predictor, args.image)
-
-
 if __name__ == '__main__':
     main()
-    # cpu_rpn()
-    # gpu_rpn()
