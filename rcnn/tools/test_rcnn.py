@@ -17,8 +17,9 @@ def test_rcnn(network, dataset, image_set, root_path, dataset_path,
     # set config
     if has_rpn:
         config.TEST.HAS_RPN = True
-
-    # print config
+    config.SCALES = [(563, 1000)]
+    config.TEST.RPN_POST_NMS_TOP_N = 20
+    config.TEST.PROPOSAL_POST_NMS_TOP_N = 20
     pprint.pprint(config)
 
     # load symbol and testing data

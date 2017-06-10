@@ -9,7 +9,7 @@ def get_bbox_lst(res_path):
     for line in lines:
         items = line.strip().split()
         items = [float(c) for c in items[1 :]]
-        bboxes = [items[i : i + 4] for i in range(0, len(items) - 4, 5)]
+        bboxes = [items[i: i + 4] for i in range(0, len(items) - 4, 5)]
         bbox_lst.append(bboxes)
     return bbox_lst
 
