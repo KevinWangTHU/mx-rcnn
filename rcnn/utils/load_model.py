@@ -56,4 +56,6 @@ def load_param(prefix, epoch, convert=False, ctx=None, process=False):
         tests = [k for k in arg_params.keys() if '_test' in k]
         for test in tests:
             arg_params[test.replace('_test', '')] = arg_params.pop(test)
+    # del arg_params['cls_score_weight'], arg_params['cls_score_bias']
+    # del arg_params['bbox_pred_weight'], arg_params['bbox_pred_bias']
     return arg_params, aux_params
