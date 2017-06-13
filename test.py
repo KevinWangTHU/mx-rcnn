@@ -3,7 +3,7 @@ import mxnet as mx
 from rcnn.logger import logger
 from rcnn.config import config, default, generate_config
 from rcnn.tools.test_rcnn import test_rcnn
-
+from test.test_eval import evaluate
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Test a Faster R-CNN network')
@@ -25,6 +25,7 @@ def parse_args():
     parser.add_argument('--shuffle', help='shuffle data on visualization', action='store_true')
     parser.add_argument('--has_rpn', help='generate proposals on the fly', action='store_true', default=True)
     parser.add_argument('--proposal', help='can be ss for selective search or rpn', default='rpn', type=str)
+    parser.add_argument('--num_proposal', help='number of proposals after NMS', default=300, type=int)
     args = parser.parse_args()
     return args
 
@@ -35,7 +36,10 @@ def main():
     ctx = mx.gpu(args.gpu)
     test_rcnn(args.network, args.dataset, args.image_set, args.root_path, args.dataset_path,
               ctx, args.prefix, args.epoch,
-              args.vis, args.shuffle, args.has_rpn, args.proposal, args.thresh)
+              args.vis, args.shuffle, args.has_rpn, args.proposal, args.thresh, args.num_proposal)
 
 if __name__ == '__main__':
     main()
+    pred_path = '/home/mingdongwang/Desktop/UCSD/mx-rcnn/data/cache/results/val.lst'
+    truth_path = '/home/mingdongwang/Desktop/UCSD/mx-rcnn/data/custom_0/imglists/val.lst'
+    evaluate(pred_path, truth_path)

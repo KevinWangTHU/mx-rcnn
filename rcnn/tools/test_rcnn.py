@@ -13,13 +13,12 @@ from ..utils.load_model import load_param
 
 def test_rcnn(network, dataset, image_set, root_path, dataset_path,
               ctx, prefix, epoch,
-              vis, shuffle, has_rpn, proposal, thresh):
+              vis, shuffle, has_rpn, proposal, thresh, num_proposal):
     # set config
     if has_rpn:
         config.TEST.HAS_RPN = True
-    config.SCALES = [(563, 1000)]
-    config.TEST.RPN_POST_NMS_TOP_N = 20
-    config.TEST.PROPOSAL_POST_NMS_TOP_N = 20
+    # config.SCALES = [(563, 1000)]
+    config.TEST.RPN_POST_NMS_TOP_N = num_proposal
     pprint.pprint(config)
 
     # load symbol and testing data
